@@ -240,4 +240,6 @@ read([{
 }])
 ```
 What if we write to callback `alert(‘xss’);read`. We can notice that it will run alert code.
- 
+
+## Further reading
+* https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html
